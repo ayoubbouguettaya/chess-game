@@ -1,7 +1,7 @@
-const intialiseGame = () => {
+const intializeGame = () => {
     let boardGame = [];
     let color = 'black';
-    let player = 0;
+    let player = 2;
     let piece;
     let square;
 
@@ -33,7 +33,7 @@ const intialiseGame = () => {
             }
 
             if (row === 6 || row === 7) {
-                player = 2;
+                player = 1;
             }
 
             square = { color, piece, player, row, column };
@@ -45,11 +45,19 @@ const intialiseGame = () => {
     return boardGame;
 }
 
-const inverseColor = (colorParams, columnParms) => {
+export const inverseColor = (colorParams, columnParms) => {
     if (columnParms !== 0) {
         return (colorParams === 'black' ? 'white' : 'black');
     }
     return colorParams;
 };
 
-export default intialiseGame;
+export const checkIsSelected = (square, selectedSquare) => {
+    if(selectedSquare && square.row === selectedSquare.row && square.column == selectedSquare.column){
+        return true;
+    }
+
+    return false;
+}
+
+export default intializeGame;
