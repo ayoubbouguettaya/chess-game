@@ -1,0 +1,13 @@
+.home_container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    min-height: 100vh;
+    background-color: #f1f2f5;
+    color: #ef4130;
+}
+.board_container{
+    background-color: white;
+    border: 5px solid #888;
+}
