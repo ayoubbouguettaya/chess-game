@@ -1,0 +1,30 @@
+.square {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    cursor: pointer;
+    border: 1px solid rgba(0,0, 0,0.5 alpha);
+}
+.square_black{
+    background-color: #333333;
+}
+.square_white{
+    background-color: #aaaaaa;
+}
+.square img{
+    width: 100%;
+    height: auto;
+    margin-bottom: 5px;
+}
+.square.is_checked img{
+    filter: grayscale(80%);
+}
+.square:hover img{
+    transform: scale(1.1);
+}
+@media (max-width: 768px){
+    .square{
+        min-height: 40px;
+    }
+}

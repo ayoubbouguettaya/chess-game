@@ -1,0 +1,19 @@
+.board{
+    display: grid;
+    grid-template-columns:  repeat(8,1fr);
+    grid-template-rows: repeat(8,1fr);
+    width: 500px;
+    height: 500px;
+}
+@media (max-width: 768px){
+    .board{
+        width: 400px;
+        height: 400px;
+    }
+}
+@media (max-width: 575px){
+    .board{
+        width: 320px;
+        height: 320px;
+    }
+}
