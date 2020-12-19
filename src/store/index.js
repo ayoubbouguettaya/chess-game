@@ -5,7 +5,11 @@ import { gameReducer } from './reducer';
 const gameContext = createContext();
 
 const { Provider } = gameContext;
-const initialState = []
+const initialState = {
+    board: [],
+    player: 1,
+    selectedSquare: undefined,
+}
 
 const GameProvider = ({ children }) => {
     const [gameState, dispatch] = useReducer(gameReducer, initialState);
