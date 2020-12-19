@@ -1,5 +1,7 @@
-const  INITIALIZE_GAME = 'initialize';
+const  INITIALIZE_GAME = 'INITIALIZE_GAME';
+const SELECT_PIECE = 'SELECT_PIECE'
 
 export {
     INITIALIZE_GAME,
+    SELECT_PIECE
 };
