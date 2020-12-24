@@ -9,6 +9,7 @@ const initialState = {
     board: [],
     player: 1,
     selectedSquare: undefined,
+    allowedSquare: [],
 }
 
 const GameProvider = ({ children }) => {
