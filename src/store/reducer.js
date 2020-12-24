@@ -1,15 +1,36 @@
-import intializeGame from './function';
-import { INITIALIZE_GAME, SELECT_PIECE } from './action';
+import { intializeGame, movePiece, calculateAllowedSquare } from './function';
+import { INITIALIZE_GAME, SELECT_PIECE, MOVE_PIECE, CALCULATE_ALLOWED_SQUARE } from './action';
 
 export const gameReducer = (state, action) => {
+    const {
+        board = '',
+        allowedSquare = '',
+        row = '',
+        column = '',
+        piece = '',
+        selectedSquare = '',
+        nextSquare = '',
+    } = action.payload || {};
+
     switch (action.type) {
         case INITIALIZE_GAME:
-            const board = intializeGame();
-            return { ...state, board };
+            const intilaizedBoard = intializeGame();
+
+            return { ...state, board: intilaizedBoard };
         case SELECT_PIECE:
-            const { payload: { row, column } } = action;
-            return { ...state, selectedSquare: { row, column } }
-            break;
+
+            return { ...state, selectedSquare: { row, column, piece } };
+        case CALCULATE_ALLOWED_SQUARE:
+            const newAllowedSquare = calculateAllowedSquare(board, selectedSquare);
+
+            return { ...state, allowedSquare: newAllowedSquare };
+        case MOVE_PIECE:
+            const isAllowed = allowedSquare.some((move) => move.row === nextSquare.row && move.column === nextSquare.column)
+            if (isAllowed) {
+                const newBoard = movePiece(board, selectedSquare, nextSquare);
+                return { ...state, board: newBoard, selectedSquare: undefined, allowedSquare: [] }
+            }
+            return state;
         default:
             break;
     }
