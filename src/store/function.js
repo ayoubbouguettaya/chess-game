@@ -102,10 +102,10 @@ const calculatePawnMoves = (board, selectedSquare) => {
     if (getPiece(board, selectedSquare, -1, 0).piece === 'empty') {
         allowedMoves.push({ row: selectedSquare.row - 1, column: selectedSquare.column });
     }
-    if (!getPiece(board, selectedSquare, -1, 1).isMyPiece) {
+    if (!getPiece(board, selectedSquare, -1, 1).isMyPiece && getPiece(board, selectedSquare, -1, 1).piece !== 'empty') {
         allowedMoves.push({ row: selectedSquare.row - 1, column: selectedSquare.column + 1 });
     }
-    if (!getPiece(board, selectedSquare, -1, -1).isMyPiece) {
+    if (!getPiece(board, selectedSquare, -1, -1).isMyPiece && getPiece(board, selectedSquare, -1, -1).piece !== 'empty') {
         allowedMoves.push({ row: selectedSquare.row - 1, column: selectedSquare.column - 1 });
     }
 
