@@ -2,23 +2,26 @@ import React, { useContext, useState } from 'react';
 
 import styles from './square.module.css';
 import { gameContext } from '../../../store';
-import { SELECT_PIECE } from '../../../store/action';
+import { SELECT_PIECE, MOVE_PIECE, CALCULATE_ALLOWED_SQUARE } from '../../../store/action';
 import { checkIsSelected } from '../../../store/function';
 
-const Square = ({ color, piece, player, row, column }) => {
-    const imageSrc = `/assets/${piece}${player === 1 ? '_' : ''}.png`;
+const Square = ({ color, piece, isMyPiece, row, column }) => {
+    const imageSrc = `/assets/${piece}${isMyPiece ? '_' : ''}.png`;
 
-    const { dispatch, gameState: { player: myPlayer, selectedSquare } } = useContext(gameContext);
+    const { dispatch, gameState: { board, player, selectedSquare, allowedSquare } } = useContext(gameContext);
     const isSelected = checkIsSelected({ row, column }, selectedSquare)
 
     const handleSelect = () => {
-        if (selectedSquare) {
-            console.log('move action require :1/ the global state,2/ selected square, 3/ square to move');
+        /* movement */
+        if (selectedSquare && !isMyPiece) {
+            dispatch({ type: MOVE_PIECE, payload: { board, allowedSquare, selectedSquare, nextSquare: { row, column, piece } } });
         }
-
-        if (!isSelected && piece !== 'empty' && myPlayer === player) {
-            return dispatch({ type: SELECT_PIECE, payload: { row, column } })
+        /* selection */
+        if (!isSelected && piece !== 'empty' && isMyPiece) {
+            dispatch({ type: CALCULATE_ALLOWED_SQUARE, payload: { board, selectedSquare: { row, column, piece } } });
+            return dispatch({ type: SELECT_PIECE, payload: { row, column, piece } });
         }
+        /* diselection */
     }
 
     return (
