@@ -3,30 +3,44 @@ import React, { useContext, useState } from 'react';
 import styles from './square.module.css';
 import { gameContext } from '../../../store';
 import { SELECT_PIECE, MOVE_PIECE, CALCULATE_ALLOWED_SQUARE } from '../../../store/action';
-import { checkIsSelected } from '../../../store/function';
+import { checkIsSelected, checkIsHeighlighted } from './helpers/utils';
 
-const Square = ({ color, piece, isMyPiece, row, column }) => {
-    const imageSrc = `/assets/${piece}${isMyPiece ? '_' : ''}.png`;
+const Square = ({ color, row, column, piece, isMyPiece, player }) => {
+    const {
+        dispatch, gameState: { board, myPlayer, selectedSquare, allowedSquare },
+    } = useContext(gameContext);
 
-    const { dispatch, gameState: { board, player, selectedSquare, allowedSquare } } = useContext(gameContext);
-    const isSelected = checkIsSelected({ row, column }, selectedSquare)
+    const imageSrc = `/assets/${piece}${player === 1 ? '_' : ''}.png`;
+
+    const isSelected = checkIsSelected({ row, column }, selectedSquare);
+    const isHighlighted = checkIsHeighlighted({ row, column }, allowedSquare);
+
+    const className = `${styles.square} ${isSelected ? styles.is_selected : ''} ${isHighlighted ? styles.is_highlighted : ''} ${color === 'black' ? styles.square_black : styles.square_white}`
 
     const handleSelect = () => {
-        /* movement */
-        if (selectedSquare && !isMyPiece) {
-            dispatch({ type: MOVE_PIECE, payload: { board, allowedSquare, selectedSquare, nextSquare: { row, column, piece } } });
-        }
-        /* selection */
         if (!isSelected && piece !== 'empty' && isMyPiece) {
-            dispatch({ type: CALCULATE_ALLOWED_SQUARE, payload: { board, selectedSquare: { row, column, piece } } });
-            return dispatch({ type: SELECT_PIECE, payload: { row, column, piece } });
+            dispatch({
+                type: CALCULATE_ALLOWED_SQUARE,
+                payload: { board, myPlayer, selectedSquare: { row, column, piece } }
+            });
+
+            return dispatch({
+                type: SELECT_PIECE,
+                payload: { row, column, piece, player }
+            });
         }
-        /* diselection */
+
+        if (selectedSquare && !isMyPiece) {
+            dispatch({
+                type: MOVE_PIECE,
+                payload: { board, allowedSquare, selectedSquare, nextSquare: { row, column } }
+            });
+        }
     }
 
     return (
         <div
-            className={`${styles.square} ${isSelected ? styles.is_checked : ''} ${color === 'black' ? styles.square_black : styles.square_white}`}
+            className={className}
             onClick={handleSelect}
         >
             {(piece !== 'empty') ? <img src={imageSrc} /> : '.'}

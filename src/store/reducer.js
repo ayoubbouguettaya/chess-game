@@ -10,18 +10,20 @@ export const gameReducer = (state, action) => {
         piece = '',
         selectedSquare = '',
         nextSquare = '',
+        myPlayer = '',
+        player = '',
     } = action.payload || {};
 
     switch (action.type) {
         case INITIALIZE_GAME:
-            const intilaizedBoard = intializeGame();
+            const intilaizedBoard = intializeGame(myPlayer);
 
             return { ...state, board: intilaizedBoard };
         case SELECT_PIECE:
 
-            return { ...state, selectedSquare: { row, column, piece } };
+            return { ...state, selectedSquare: { row, column, piece, player } };
         case CALCULATE_ALLOWED_SQUARE:
-            const newAllowedSquare = calculateAllowedSquare(board, selectedSquare);
+            const newAllowedSquare = calculateAllowedSquare(board,myPlayer, selectedSquare);
 
             return { ...state, allowedSquare: newAllowedSquare };
         case MOVE_PIECE:
