@@ -3,7 +3,7 @@ import React, { useEffect, useContext } from 'react';
 import styles from './board.module.css';
 import { gameContext } from '../../../store/';
 import Square from '../square';
-import { INITIALIZE_GAME } from '../../../store/action';
+import { INITIALIZE_GAME } from '../../../store/actions';
 
 const Board = () => {
     const { gameState: { board ,myPlayer}, dispatch } = useContext(gameContext);

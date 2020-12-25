@@ -1,6 +1,8 @@
+import { EMPTY, PAWN, ROOK, kNIGHT, BISHOP, QUEEN, KING, BLACK, WHITE } from '../utils/constants';
+
 export const intializeGame = (myPlayer) => {
     let boardGame = [];
-    let color = 'black';
+    let color = BLACK;
     let square;
     let piece;
     let player ;
@@ -9,29 +11,29 @@ export const intializeGame = (myPlayer) => {
     for (let row = 0; row < 8; row++) {
         let rows = []
         for (let column = 0; column < 8; column++) {
-            piece = 'empty';
+            piece = EMPTY;
             player = 0;
             isMyPiece = false;
 
             if (row === 1 || row === 6) {
-                piece = 'pawn';
+                piece = PAWN;
             }
 
             if (row === 0 || row === 7) {
                 if (column === 0 || column === 7) {
-                    piece = 'rook';
+                    piece = ROOK;
                 }
                 if (column === 1 || column === 6) {
-                    piece = 'knight';
+                    piece = kNIGHT;
                 }
                 if (column === 2 || column === 5) {
-                    piece = 'bishop';
+                    piece = BISHOP;
                 }
                 if (column === 3) {
-                    piece = 'queen';
+                    piece = QUEEN;
                 }
                 if (column === 4) {
-                    piece = 'king';
+                    piece = KING;
                 }
             }
             if (row === 0 || row === 1) {
@@ -57,32 +59,32 @@ export const intializeGame = (myPlayer) => {
 }
 
 const inverseColor = (colorParams) => {
-    return (colorParams === 'black' ? 'white' : 'black');
+    return (colorParams === BLACK ? WHITE : BLACK);
 };
 
 export const movePiece = (board, selectedSquare, nextSquare) => {
     board[nextSquare.row][nextSquare.column].piece = selectedSquare.piece;
     board[nextSquare.row][nextSquare.column].player = selectedSquare.player;
     board[nextSquare.row][nextSquare.column].isMyPiece = true;
-    board[selectedSquare.row][selectedSquare.column].piece = 'empty';
+    board[selectedSquare.row][selectedSquare.column].piece = EMPTY;
 
     return board;
 };
 
-export const calculateAllowedSquare = (board, myPlayer, selectedSquare) => {
+export const calculateAllowedSquares = (board, myPlayer, selectedSquare) => {
     const { piece } = selectedSquare;
     switch (piece) {
-        case 'pawn':
+        case PAWN:
             return calculatePawnMoves(board, myPlayer, selectedSquare);
-        case 'rook':
+        case ROOK:
             return calculateRookMoves(board, selectedSquare);
-        case 'bishop':
+        case BISHOP:
             return calculateBishopMoves(board, selectedSquare);
-        case 'knight':
+        case kNIGHT:
             return calculateKnightMoves(board, selectedSquare);
-        case 'king':
+        case KING:
             return calculateKingMoves(board, selectedSquare);
-        case 'queen':
+        case QUEEN:
             return calculateQueenMoves(board, selectedSquare);
         default:
             return [];
@@ -102,13 +104,13 @@ const calculatePawnMoves = (board, myPlayer, selectedSquare) => {
     const allowedMoves = [];
     const stepAhead = (myPlayer === 1) ? -1 : 1;
 
-    if (getPiece(board, selectedSquare, stepAhead, 0).piece === 'empty') {
+    if (getPiece(board, selectedSquare, stepAhead, 0).piece === EMPTY) {
         allowedMoves.push({ row: selectedSquare.row + stepAhead, column: selectedSquare.column });
     }
-    if (!getPiece(board, selectedSquare, stepAhead, 1).isMyPiece && getPiece(board, selectedSquare, stepAhead, 1).piece !== 'empty') {
+    if (!getPiece(board, selectedSquare, stepAhead, 1).isMyPiece && getPiece(board, selectedSquare, stepAhead, 1).piece !== EMPTY) {
         allowedMoves.push({ row: selectedSquare.row + stepAhead, column: selectedSquare.column + 1 });
     }
-    if (!getPiece(board, selectedSquare, stepAhead, -1).isMyPiece && getPiece(board, selectedSquare, stepAhead, -1).piece !== 'empty') {
+    if (!getPiece(board, selectedSquare, stepAhead, -1).isMyPiece && getPiece(board, selectedSquare, stepAhead, -1).piece !== EMPTY) {
         allowedMoves.push({ row: selectedSquare.row + stepAhead, column: selectedSquare.column - 1 });
     }
 
