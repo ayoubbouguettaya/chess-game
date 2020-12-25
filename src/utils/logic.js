@@ -1,11 +1,12 @@
-import { EMPTY, PAWN, ROOK, kNIGHT, BISHOP, QUEEN, KING, BLACK, WHITE } from '../utils/constants';
+import { EMPTY, PAWN, ROOK, kNIGHT, BISHOP, QUEEN, KING, BLACK } from '../utils/constants';
+import { inverseColor, getPiece, filterAllowedMoves } from '../utils/functions';
 
 export const intializeGame = (myPlayer) => {
     let boardGame = [];
     let color = BLACK;
     let square;
     let piece;
-    let player ;
+    let player;
     let isMyPiece;
 
     for (let row = 0; row < 8; row++) {
@@ -40,7 +41,7 @@ export const intializeGame = (myPlayer) => {
                 player = 2;
                 isMyPiece = (myPlayer === 2) ? true : false;
             }
-            
+
             if (row === 6 || row === 7) {
                 player = 1;
                 isMyPiece = (myPlayer === 1) ? true : false;;
@@ -58,10 +59,6 @@ export const intializeGame = (myPlayer) => {
     return boardGame;
 }
 
-const inverseColor = (colorParams) => {
-    return (colorParams === BLACK ? WHITE : BLACK);
-};
-
 export const movePiece = (board, selectedSquare, nextSquare) => {
     board[nextSquare.row][nextSquare.column].piece = selectedSquare.piece;
     board[nextSquare.row][nextSquare.column].player = selectedSquare.player;
@@ -73,32 +70,34 @@ export const movePiece = (board, selectedSquare, nextSquare) => {
 
 export const calculateAllowedSquares = (board, myPlayer, selectedSquare) => {
     const { piece } = selectedSquare;
+    let allowedMoves;
+
     switch (piece) {
         case PAWN:
-            return calculatePawnMoves(board, myPlayer, selectedSquare);
+            allowedMoves = calculatePawnMoves(board, myPlayer, selectedSquare);
+            break;
         case ROOK:
-            return calculateRookMoves(board, selectedSquare);
+            allowedMoves = calculateRookMoves(board, selectedSquare);
+            break;
         case BISHOP:
-            return calculateBishopMoves(board, selectedSquare);
+            allowedMoves = calculateBishopMoves(board, selectedSquare);
+            break;
         case kNIGHT:
-            return calculateKnightMoves(board, selectedSquare);
+            allowedMoves = calculateKnightMoves(board, selectedSquare);
+            break;
         case KING:
-            return calculateKingMoves(board, selectedSquare);
+            allowedMoves = calculateKingMoves(board, selectedSquare);
+            break;
         case QUEEN:
-            return calculateQueenMoves(board, selectedSquare);
+            allowedMoves = calculateQueenMoves(board, selectedSquare);
+            break;
         default:
-            return [];
+            allowedMoves = [];
+            break;
     }
+    
+    return filterAllowedMoves(allowedMoves);
 };
-
-const getPiece = (board, square, addRow = 0, addColumn = 0) => {
-    if (square.row + addRow >= 0 && square.row + addRow < 8
-        && square.column + addColumn >= 0 && square.column + addColumn < 8) {
-
-        return board[square.row + addRow][square.column + addColumn];
-    }
-    return { row: -1, column: -1, piece: '', isMyPiece: false }
-}
 
 const calculatePawnMoves = (board, myPlayer, selectedSquare) => {
     const allowedMoves = [];
@@ -114,7 +113,7 @@ const calculatePawnMoves = (board, myPlayer, selectedSquare) => {
         allowedMoves.push({ row: selectedSquare.row + stepAhead, column: selectedSquare.column - 1 });
     }
 
-    return allowedMoves.filter((square) => (square.row >= 0 && square.row < 8 && square.column >= 0 && square.column < 8));
+    return allowedMoves;
 };
 
 const calculateRookMoves = (board, selectedSquare) => {
