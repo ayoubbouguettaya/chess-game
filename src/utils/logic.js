@@ -1,44 +1,47 @@
+import { EMPTY, PAWN, ROOK, kNIGHT, BISHOP, QUEEN, KING, BLACK } from '../utils/constants';
+import { inverseColor, getPiece, filterAllowedMoves } from '../utils/functions';
+
 export const intializeGame = (myPlayer) => {
     let boardGame = [];
-    let color = 'black';
+    let color = BLACK;
     let square;
     let piece;
-    let player ;
+    let player;
     let isMyPiece;
 
     for (let row = 0; row < 8; row++) {
         let rows = []
         for (let column = 0; column < 8; column++) {
-            piece = 'empty';
+            piece = EMPTY;
             player = 0;
             isMyPiece = false;
 
             if (row === 1 || row === 6) {
-                piece = 'pawn';
+                piece = PAWN;
             }
 
             if (row === 0 || row === 7) {
                 if (column === 0 || column === 7) {
-                    piece = 'rook';
+                    piece = ROOK;
                 }
                 if (column === 1 || column === 6) {
-                    piece = 'knight';
+                    piece = kNIGHT;
                 }
                 if (column === 2 || column === 5) {
-                    piece = 'bishop';
+                    piece = BISHOP;
                 }
                 if (column === 3) {
-                    piece = 'queen';
+                    piece = QUEEN;
                 }
                 if (column === 4) {
-                    piece = 'king';
+                    piece = KING;
                 }
             }
             if (row === 0 || row === 1) {
                 player = 2;
                 isMyPiece = (myPlayer === 2) ? true : false;
             }
-            
+
             if (row === 6 || row === 7) {
                 player = 1;
                 isMyPiece = (myPlayer === 1) ? true : false;;
@@ -56,63 +59,61 @@ export const intializeGame = (myPlayer) => {
     return boardGame;
 }
 
-const inverseColor = (colorParams) => {
-    return (colorParams === 'black' ? 'white' : 'black');
-};
-
 export const movePiece = (board, selectedSquare, nextSquare) => {
     board[nextSquare.row][nextSquare.column].piece = selectedSquare.piece;
     board[nextSquare.row][nextSquare.column].player = selectedSquare.player;
     board[nextSquare.row][nextSquare.column].isMyPiece = true;
-    board[selectedSquare.row][selectedSquare.column].piece = 'empty';
+    board[selectedSquare.row][selectedSquare.column].piece = EMPTY;
 
     return board;
 };
 
-export const calculateAllowedSquare = (board, myPlayer, selectedSquare) => {
+export const calculateAllowedSquares = (board, myPlayer, selectedSquare) => {
     const { piece } = selectedSquare;
+    let allowedMoves;
+
     switch (piece) {
-        case 'pawn':
-            return calculatePawnMoves(board, myPlayer, selectedSquare);
-        case 'rook':
-            return calculateRookMoves(board, selectedSquare);
-        case 'bishop':
-            return calculateBishopMoves(board, selectedSquare);
-        case 'knight':
-            return calculateKnightMoves(board, selectedSquare);
-        case 'king':
-            return calculateKingMoves(board, selectedSquare);
-        case 'queen':
-            return calculateQueenMoves(board, selectedSquare);
+        case PAWN:
+            allowedMoves = calculatePawnMoves(board, myPlayer, selectedSquare);
+            break;
+        case ROOK:
+            allowedMoves = calculateRookMoves(board, selectedSquare);
+            break;
+        case BISHOP:
+            allowedMoves = calculateBishopMoves(board, selectedSquare);
+            break;
+        case kNIGHT:
+            allowedMoves = calculateKnightMoves(board, selectedSquare);
+            break;
+        case KING:
+            allowedMoves = calculateKingMoves(board, selectedSquare);
+            break;
+        case QUEEN:
+            allowedMoves = calculateQueenMoves(board, selectedSquare);
+            break;
         default:
-            return [];
+            allowedMoves = [];
+            break;
     }
+    
+    return filterAllowedMoves(allowedMoves);
 };
-
-const getPiece = (board, square, addRow = 0, addColumn = 0) => {
-    if (square.row + addRow >= 0 && square.row + addRow < 8
-        && square.column + addColumn >= 0 && square.column + addColumn < 8) {
-
-        return board[square.row + addRow][square.column + addColumn];
-    }
-    return { row: -1, column: -1, piece: '', isMyPiece: false }
-}
 
 const calculatePawnMoves = (board, myPlayer, selectedSquare) => {
     const allowedMoves = [];
     const stepAhead = (myPlayer === 1) ? -1 : 1;
 
-    if (getPiece(board, selectedSquare, stepAhead, 0).piece === 'empty') {
+    if (getPiece(board, selectedSquare, stepAhead, 0).piece === EMPTY) {
         allowedMoves.push({ row: selectedSquare.row + stepAhead, column: selectedSquare.column });
     }
-    if (!getPiece(board, selectedSquare, stepAhead, 1).isMyPiece && getPiece(board, selectedSquare, stepAhead, 1).piece !== 'empty') {
+    if (!getPiece(board, selectedSquare, stepAhead, 1).isMyPiece && getPiece(board, selectedSquare, stepAhead, 1).piece !== EMPTY) {
         allowedMoves.push({ row: selectedSquare.row + stepAhead, column: selectedSquare.column + 1 });
     }
-    if (!getPiece(board, selectedSquare, stepAhead, -1).isMyPiece && getPiece(board, selectedSquare, stepAhead, -1).piece !== 'empty') {
+    if (!getPiece(board, selectedSquare, stepAhead, -1).isMyPiece && getPiece(board, selectedSquare, stepAhead, -1).piece !== EMPTY) {
         allowedMoves.push({ row: selectedSquare.row + stepAhead, column: selectedSquare.column - 1 });
     }
 
-    return allowedMoves.filter((square) => (square.row >= 0 && square.row < 8 && square.column >= 0 && square.column < 8));
+    return allowedMoves;
 };
 
 const calculateRookMoves = (board, selectedSquare) => {

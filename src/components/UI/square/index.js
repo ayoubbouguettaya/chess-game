@@ -2,23 +2,24 @@ import React, { useContext, useState } from 'react';
 
 import styles from './square.module.css';
 import { gameContext } from '../../../store';
-import { SELECT_PIECE, MOVE_PIECE, CALCULATE_ALLOWED_SQUARE } from '../../../store/action';
+import { SELECT_PIECE, MOVE_PIECE, CALCULATE_ALLOWED_SQUARE } from '../../../store/actions';
 import { checkIsSelected, checkIsHeighlighted } from './helpers/utils';
+import { EMPTY, BLACK } from '../../../utils/constants';
 
 const Square = ({ color, row, column, piece, isMyPiece, player }) => {
     const {
-        dispatch, gameState: { board, myPlayer, selectedSquare, allowedSquare },
+        dispatch, gameState: { board, myPlayer, selectedSquare, allowedSquares },
     } = useContext(gameContext);
 
-    const imageSrc = `/assets/${piece}${player === 1 ? '' : '_'}.png`;
+    const imageSrc = `/assets/${piece.toLowerCase()}${player === 1 ? '' : '_'}.png`;
 
     const isSelected = checkIsSelected({ row, column }, selectedSquare);
-    const isHighlighted = checkIsHeighlighted({ row, column }, allowedSquare);
+    const isHighlighted = checkIsHeighlighted({ row, column }, allowedSquares);
 
-    const className = `${styles.square} ${isSelected ? styles.is_selected : ''} ${isHighlighted ? styles.is_highlighted : ''} ${color === 'black' ? styles.square_black : styles.square_white}`
+    const className = `${styles.square} ${isSelected ? styles.is_selected : ''} ${isHighlighted ? styles.is_highlighted : ''} ${color === BLACK ? styles.square_black : styles.square_white}`
 
     const handleSelect = () => {
-        if (!isSelected && piece !== 'empty' && isMyPiece) {
+        if (!isSelected && piece !== EMPTY && isMyPiece) {
             dispatch({
                 type: CALCULATE_ALLOWED_SQUARE,
                 payload: { board, myPlayer, selectedSquare: { row, column, piece } }
@@ -33,7 +34,7 @@ const Square = ({ color, row, column, piece, isMyPiece, player }) => {
         if (selectedSquare && !isMyPiece) {
             dispatch({
                 type: MOVE_PIECE,
-                payload: { board, allowedSquare, selectedSquare, nextSquare: { row, column } }
+                payload: { board, allowedSquares, selectedSquare, nextSquare: { row, column } }
             });
         }
     }
@@ -43,7 +44,7 @@ const Square = ({ color, row, column, piece, isMyPiece, player }) => {
             className={className}
             onClick={handleSelect}
         >
-            {(piece !== 'empty') ? <img src={imageSrc} /> : '.'}
+            {(piece !== EMPTY) ? <img src={imageSrc} /> : '.'}
         </div>
     );
 };
