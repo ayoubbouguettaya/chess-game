@@ -11,3 +11,7 @@
     background-color: white;
     border: 5px solid #888;
 }
+.home_container>div:nth-child(2){
+    align-self: start;
+    padding: 8rem 3rem;
+}

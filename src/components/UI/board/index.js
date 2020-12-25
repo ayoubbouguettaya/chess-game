@@ -6,15 +6,17 @@ import Square from '../square';
 import { INITIALIZE_GAME } from '../../../store/action';
 
 const Board = () => {
-    const { gameState: { board}, dispatch } = useContext(gameContext);
+    const { gameState: { board ,myPlayer}, dispatch } = useContext(gameContext);
 
     useEffect(() => {
-        dispatch({ type: INITIALIZE_GAME });
+        dispatch({ type: INITIALIZE_GAME, payload: { myPlayer} });
     }, []);
 
     return (
         <div className={styles.board}>
-            {board.map((square) => <Square key={`${square.row}${square.column}`} {...square} />)}
+            {board.map((row) => {
+                return row.map((square) => (<Square key={`${square.row}${square.column}`} {...square} />))
+            })}
         </div>
     );
 }
