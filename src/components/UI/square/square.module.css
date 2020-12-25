@@ -17,8 +17,11 @@
     height: auto;
     margin-bottom: 5px;
 }
-.square.is_checked img{
+.square.is_selected img{
     filter: contrast(150%);
+}
+.square.is_highlighted{
+    border: 3px solid white;
 }
 .square:hover img{
     transform: scale(1.1);
