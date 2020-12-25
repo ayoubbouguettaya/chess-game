@@ -10,7 +10,7 @@ const Square = ({ color, row, column, piece, isMyPiece, player }) => {
         dispatch, gameState: { board, myPlayer, selectedSquare, allowedSquare },
     } = useContext(gameContext);
 
-    const imageSrc = `/assets/${piece}${player === 1 ? '_' : ''}.png`;
+    const imageSrc = `/assets/${piece}${player === 1 ? '' : '_'}.png`;
 
     const isSelected = checkIsSelected({ row, column }, selectedSquare);
     const isHighlighted = checkIsHeighlighted({ row, column }, allowedSquare);
