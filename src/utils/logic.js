@@ -64,6 +64,7 @@ export const movePiece = (board, selectedSquare, nextSquare) => {
     board[nextSquare.row][nextSquare.column].player = selectedSquare.player;
     board[nextSquare.row][nextSquare.column].isMyPiece = true;
     board[selectedSquare.row][selectedSquare.column].piece = EMPTY;
+    board[selectedSquare.row][selectedSquare.column].isMyPiece = false;
 
     return board;
 };
@@ -125,7 +126,25 @@ const calculateBishopMoves = (board, selectedSquare) => {
 };
 
 const calculateKnightMoves = (board, selectedSquare) => {
-    return [];
+    const allowedMoves = [];
+    const stepVariation = [-1,1];
+    const stepVariation2 = [-2,2]
+    let squareToJump,squareToJump2;
+
+    for (let variation of stepVariation ){
+        for (let variation2 of stepVariation2 ){
+            squareToJump = getPiece(board,selectedSquare,variation,variation2);
+            if(squareToJump.piece === EMPTY || !squareToJump.isMyPiece){
+                allowedMoves.push({row: squareToJump.row, column: squareToJump.column})    
+            }
+            squareToJump2 = getPiece(board,selectedSquare,variation2,variation);
+            if(squareToJump2.piece === EMPTY || !squareToJump2.isMyPiece){
+                allowedMoves.push({row: squareToJump2.row, column: squareToJump2.column})    
+            }
+        }
+    }
+
+    return allowedMoves;
 };
 
 const calculateKingMoves = (board, selectedSquare) => {
