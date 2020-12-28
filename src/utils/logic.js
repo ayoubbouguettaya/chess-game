@@ -1,5 +1,5 @@
 import { EMPTY, PAWN, ROOK, kNIGHT, BISHOP, QUEEN, KING, BLACK } from '../utils/constants';
-import { inverseColor, getPiece, filterAllowedMoves } from '../utils/functions';
+import { inverseColor, getPiece, filterAllowedMoves, IsInboundaries } from '../utils/functions';
 
 export const intializeGame = (myPlayer) => {
     let boardGame = [];
@@ -96,7 +96,7 @@ export const calculateAllowedSquares = (board, myPlayer, selectedSquare) => {
             allowedMoves = [];
             break;
     }
-    
+
     return filterAllowedMoves(allowedMoves);
 };
 
@@ -122,24 +122,41 @@ const calculateRookMoves = (board, selectedSquare) => {
 };
 
 const calculateBishopMoves = (board, selectedSquare) => {
-    return [];
+    const allowedMoves = [];
+    const { row, column } = selectedSquare;
+    const stepVariation = [-1, 1];
+    let step;
+    for (let variat of stepVariation) {
+        for (let variat2 of stepVariation) {
+            step = 1;
+            while (IsInboundaries({ row, column }, step * variat, step * variat2) && getPiece(board, { row, column }, step * variat, step * variat2).piece === EMPTY) {
+                allowedMoves.push({ row: row + (variat * step), column: column + (variat2 * step) });
+                step++;
+            }
+            if (IsInboundaries({ row, column }, step * variat, step * variat2) && !getPiece(board, { row, column }, step * variat, step * variat2).isMyPiece) {
+                allowedMoves.push({ row: row + (variat * step), column: column + (variat2 * step) });
+            }
+        }
+    }
+
+    return allowedMoves;
 };
 
 const calculateKnightMoves = (board, selectedSquare) => {
     const allowedMoves = [];
-    const stepVariation = [-1,1];
-    const stepVariation2 = [-2,2]
-    let squareToJump,squareToJump2;
+    const stepVariation = [-1, 1];
+    const stepVariation2 = [-2, 2]
+    let squareToJump, squareToJump2;
 
-    for (let variation of stepVariation ){
-        for (let variation2 of stepVariation2 ){
-            squareToJump = getPiece(board,selectedSquare,variation,variation2);
-            if(squareToJump.piece === EMPTY || !squareToJump.isMyPiece){
-                allowedMoves.push({row: squareToJump.row, column: squareToJump.column})    
+    for (let variation of stepVariation) {
+        for (let variation2 of stepVariation2) {
+            squareToJump = getPiece(board, selectedSquare, variation, variation2);
+            if (squareToJump.piece === EMPTY || !squareToJump.isMyPiece) {
+                allowedMoves.push({ row: squareToJump.row, column: squareToJump.column })
             }
-            squareToJump2 = getPiece(board,selectedSquare,variation2,variation);
-            if(squareToJump2.piece === EMPTY || !squareToJump2.isMyPiece){
-                allowedMoves.push({row: squareToJump2.row, column: squareToJump2.column})    
+            squareToJump2 = getPiece(board, selectedSquare, variation2, variation);
+            if (squareToJump2.piece === EMPTY || !squareToJump2.isMyPiece) {
+                allowedMoves.push({ row: squareToJump2.row, column: squareToJump2.column })
             }
         }
     }
