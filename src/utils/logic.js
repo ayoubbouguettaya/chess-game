@@ -118,7 +118,33 @@ const calculatePawnMoves = (board, myPlayer, selectedSquare) => {
 };
 
 const calculateRookMoves = (board, selectedSquare) => {
-    return [];
+    const allowedMoves = [];
+    const { row, column } = selectedSquare;
+    const stepVariation = [-1, 1];
+    let step;
+    for (let variat of stepVariation) {
+
+        step = 1;
+        while (IsInboundaries({ row, column }, step * variat, 0) && getPiece(board, { row, column }, step * variat, 0).piece === EMPTY) {
+            allowedMoves.push({ row: row + (variat * step), column: column });
+            step++;
+        }
+        if (IsInboundaries({ row, column }, step * variat, 0) && !getPiece(board, { row, column }, step * variat, 0).isMyPiece) {
+            allowedMoves.push({ row: row + (variat * step), column: column });
+        }
+
+        step = 1;
+        while (IsInboundaries({ row, column }, 0, step * variat) && getPiece(board, { row, column }, 0, step * variat).piece === EMPTY) {
+            allowedMoves.push({ row: row, column: column + (variat * step) });
+            step++;
+        }
+        if (IsInboundaries({ row, column }, 0, step * variat) && !getPiece(board, { row, column }, 0, step * variat).isMyPiece) {
+            allowedMoves.push({ row: row, column: column + (variat * step) });
+        }
+
+    }
+
+    return allowedMoves;
 };
 
 const calculateBishopMoves = (board, selectedSquare) => {
@@ -169,5 +195,5 @@ const calculateKingMoves = (board, selectedSquare) => {
 };
 
 const calculateQueenMoves = (board, selectedSquare) => {
-    return [];
+    return [...calculateBishopMoves(board, selectedSquare), ...calculateRookMoves(board, selectedSquare)];
 };
