@@ -1,4 +1,5 @@
-import React, { useContext } from 'react';
+import React, {useEffect, useContext } from 'react';
+import {io} from 'socket.io-client';
 
 import styles from './home.module.css';
 import Board from '../UI/board';
@@ -7,6 +8,13 @@ import { gameContext } from '../../store';
 const HomeComponent = () => {
     const { gameState: { myPlayer, allowedSquares } } = useContext(gameContext);
 
+    useEffect(() => {
+        const socket = io('ws://localhost:5001');
+
+        socket.on("connect", () => {
+          console.log('I\'m connecting ..........');
+        });
+    }, [])
     return (
         <div className={styles.home_container} >
             <div className={styles.board_container}>
