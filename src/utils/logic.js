@@ -194,7 +194,17 @@ const calculateKnightMoves = (board, selectedSquare) => {
 };
 
 const calculateKingMoves = (board, selectedSquare) => {
-    return [];
+    const allowedMoves = [];
+    const stepVariation = [-1,0,1];
+
+    for (let var1 of stepVariation) {
+        for (let var2 of stepVariation) {
+            if(!getPiece(board,selectedSquare,var1,var2).isMyPiece){
+                allowedMoves.push({row: selectedSquare.row + var1, column: selectedSquare.column + var2})
+            }
+        }   
+    }
+    return allowedMoves;
 };
 
 const calculateQueenMoves = (board, selectedSquare) => {
