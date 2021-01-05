@@ -7,7 +7,7 @@ const gameContext = createContext();
 const { Provider } = gameContext;
 const initialState = {
     board: [],
-    myPlayer: 1,
+    myPlayer: 0,
     selectedSquares: undefined,
     allowedSquare: [],
 }

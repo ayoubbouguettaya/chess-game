@@ -59,10 +59,13 @@ export const intializeGame = (myPlayer) => {
     return boardGame;
 }
 
-export const movePiece = (board, selectedSquare, nextSquare) => {
+export const movePiece = (PrevStateBoard, selectedSquare, nextSquare,isMe = true) => {
+    const board = PrevStateBoard.slice(0);
     board[nextSquare.row][nextSquare.column].piece = selectedSquare.piece;
     board[nextSquare.row][nextSquare.column].player = selectedSquare.player;
-    board[nextSquare.row][nextSquare.column].isMyPiece = true;
+    if(isMe){
+        board[nextSquare.row][nextSquare.column].isMyPiece = true;
+    }
     board[selectedSquare.row][selectedSquare.column].piece = EMPTY;
     board[selectedSquare.row][selectedSquare.column].isMyPiece = false;
 
