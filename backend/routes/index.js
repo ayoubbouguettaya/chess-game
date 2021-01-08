@@ -5,6 +5,6 @@ const gamesRouter = require('./helpers/games');
 const usersRouter = require('./helpers/users');
 
 router.get('/games/', gamesRouter);
-router.get('/users/', gamesRouter);
+router.get('/users/', usersRouter);
 
 module.exports = router;
