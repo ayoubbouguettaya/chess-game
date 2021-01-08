@@ -8,7 +8,7 @@ import { INITIALIZE_GAME, SYNC_OPPONENT_MOVE } from '../../store/actions';
 
 
 const HomeComponent = () => {
-    const { gameState: { myPlayer, board, allowedSquares }, dispatch } = useContext(gameContext);
+    const { gameState: { myPlayer, allowedSquares }, dispatch } = useContext(gameContext);
     const [playerName, setPlayerName] = useState('');
     const [gameNumber, SetGameNumber] = useState(0);
     const [messageToDisplay, SetMessageToDisplay] = useState('');
@@ -19,30 +19,42 @@ const HomeComponent = () => {
     }
 
     const handleInitializeGame = () => {
-        SetMessageToDisplay('initialize game emit event');
-        console.log(socket_io.id);
-        socket_io.emit('initialize_game', { playerName }, () => {
+        socket_io.emit('request_match', { playerName }, () => {
             SetMessageToDisplay('initialize game (emit)')
         });
     };
 
     useEffect(() => {
         socket_io.on("connect", () => {
-            SetMessageToDisplay(`I\'m connecting ..........(${socket_io.id})`);
+            SetMessageToDisplay(`I'm connecting ..........(${socket_io.id})`);
         });
 
-        socket_io.on('initialize_game', (data) => {
+        socket_io.on('request_match', (data) => {
             SetMessageToDisplay('initialize game (reciving)');
             SetGameNumber(data.gameNumber)
+
+            if (data.myPlayer === 2) {
+                console.log('initialise game')
+                socket_io.emit('initialize_game', {});
+            }
+
             dispatch({ type: INITIALIZE_GAME, payload: { myPlayer: data.myPlayer } });
         });
 
+        socket_io.on('ready_game', (data) => {
+            const { opponentPlayerName } = data;
+            SetMessageToDisplay(`opponentPlayerName : ${opponentPlayerName}`);
+        });
+
+        socket_io.on('resign',(data) => {
+            SetMessageToDisplay('your opponent has resign the game');
+        })
         socket_io.on('move', (data) => {
             const { IncomingSelectedSquare, IncommingNextSquare } = data;
             SetMessageToDisplay('the opponent has moved a piece');
             dispatch({ type: SYNC_OPPONENT_MOVE, payload: { IncomingSelectedSquare, IncommingNextSquare } })
         })
-    }, []);
+    }, [dispatch]);
     return (
         <div className={styles.home_container} >
             <div className={styles.board_container}>
