@@ -10,8 +10,8 @@ const disconnectPlayer = (connectedUser, socketId) => {
 };
 
 const disconnectBothPlayers = (connectedUser, gamesStatus, socketId) => {
-    disconnectPlayer(connectedUser, socketId);
     const opponentId = getOpponentSocketId(connectedUser, socketId)
+    disconnectPlayer(connectedUser, socketId);
     disconnectPlayer(connectedUser, opponentId);
     gamesStatus.NumberliveGames--;
     return opponentId;
@@ -30,9 +30,8 @@ const connectPlayer = (connectedUser, gamesStatus, { socketId, playerName }) => 
 
 const getOpponentSocketId = (connectedUser, socketId) => {
     const index = connectedUser.findIndex((user) => user.socketId === socketId);
-    const { socketId: opponentId } = (index % 2 === 0) ? connectedUser[index + 1] : connectedUser[index - 1];
-    console.log(opponentId);
-    return opponentId;
+    const opponentUser = (index % 2 === 0) ? connectedUser[index + 1] : connectedUser[index - 1];
+    return opponentUser && opponentUser.socketId;
 }
 
 const getPlayerNames = (connectedUser, socketId) => {
