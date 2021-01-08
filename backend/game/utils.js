@@ -9,11 +9,11 @@ const disconnectPlayer = (connectedUser, socketId) => {
     }
 };
 
-const disconnectBothPlayers = (connectedUser, socketId) => {
+const disconnectBothPlayers = (connectedUser, gamesStatus, socketId) => {
     disconnectPlayer(connectedUser, socketId);
-    const opponentId = getOpponentSocketId(connectedUser,socketId)
-    disconnectPlayer(connectedUser,opponentId);
-    
+    const opponentId = getOpponentSocketId(connectedUser, socketId)
+    disconnectPlayer(connectedUser, opponentId);
+    gamesStatus.NumberliveGames--;
     return opponentId;
 }
 
