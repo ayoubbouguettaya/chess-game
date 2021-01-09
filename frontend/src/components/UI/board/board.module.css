@@ -4,6 +4,15 @@
     grid-template-rows: repeat(8,1fr);
     width: 500px;
     height: 500px;
+    background-color: teal;
+}
+.board.inverse>div,
+.board.inverse{
+    transform: rotate(180deg);
+}
+
+.board.disabled{
+    filter: grayscale(80%);
 }
 @media (max-width: 768px){
     .board{

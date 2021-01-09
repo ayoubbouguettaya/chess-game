@@ -5,13 +5,44 @@
     flex-wrap: wrap;
     min-height: 100vh;
     background-color: #f1f2f5;
-    color: #ef4130;
+    color: teal;
 }
 .board_container{
     background-color: white;
-    border: 5px solid #888;
 }
-.home_container>div:nth-child(2){
-    align-self: start;
-    padding: 8rem 3rem;
+.indicator_container{
+    padding: 1rem .8rem;   
 }
+.board_status_container{
+    align-self: flex-start;
+    padding: 5rem 1rem;
+}
+.board_status_container button{
+    border: 1px solid teal;
+    color: teal;
+    padding: .7rem 1.4rem;
+    background-color: transparent;
+    transition: all 200ms ease-in-out;
+    cursor: pointer;
+}
+.board_status_container button:focus,
+.board_status_container button:hover{
+    color: white;
+    background-color: teal;
+}
+@media (max-width: 740px){
+    .board_status_container{
+        padding-top: 7rem;
+    }
+}
+@media (max-width: 640px){
+    .home_container{
+        flex-direction: column-reverse;
+    }
+    .board_status_container{
+        align-self: center;
+        padding-top: 2rem 0;
+    }
+}
+
+
