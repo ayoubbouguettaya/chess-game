@@ -59,13 +59,11 @@ export const intializeGame = (myPlayer) => {
     return boardGame;
 }
 
-export const movePiece = (PrevStateBoard, selectedSquare, nextSquare,isMe = true) => {
+export const movePiece = (PrevStateBoard, selectedSquare, nextSquare, isMe = true) => {
     const board = PrevStateBoard.slice(0);
     board[nextSquare.row][nextSquare.column].piece = selectedSquare.piece;
     board[nextSquare.row][nextSquare.column].player = selectedSquare.player;
-    if(isMe){
-        board[nextSquare.row][nextSquare.column].isMyPiece = true;
-    }
+    board[nextSquare.row][nextSquare.column].isMyPiece = isMe;
     board[selectedSquare.row][selectedSquare.column].piece = EMPTY;
     board[selectedSquare.row][selectedSquare.column].isMyPiece = false;
 
@@ -195,14 +193,14 @@ const calculateKnightMoves = (board, selectedSquare) => {
 
 const calculateKingMoves = (board, selectedSquare) => {
     const allowedMoves = [];
-    const stepVariation = [-1,0,1];
+    const stepVariation = [-1, 0, 1];
 
     for (let var1 of stepVariation) {
         for (let var2 of stepVariation) {
-            if(!getPiece(board,selectedSquare,var1,var2).isMyPiece){
-                allowedMoves.push({row: selectedSquare.row + var1, column: selectedSquare.column + var2})
+            if (!getPiece(board, selectedSquare, var1, var2).isMyPiece) {
+                allowedMoves.push({ row: selectedSquare.row + var1, column: selectedSquare.column + var2 })
             }
-        }   
+        }
     }
     return allowedMoves;
 };
