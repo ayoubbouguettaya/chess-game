@@ -4,70 +4,74 @@ import { socket_io } from '../../utils/socket-io';
 import styles from './home.module.css';
 import Board from '../UI/board';
 import { gameContext } from '../../store';
-import { INITIALIZE_GAME, SYNC_OPPONENT_MOVE } from '../../store/actions';
+import { INITIALIZE_GAME, SYNC_OPPONENT_MOVE ,READY_GAME, RESIGN_GAME} from '../../store/actions';
+import TurnIndicator from './helpers/turnIndicator';
+import Modal from '../UI/modal';
 
 
 const HomeComponent = () => {
-    const { gameState: { myPlayer, allowedSquares }, dispatch } = useContext(gameContext);
-    const [playerName, setPlayerName] = useState('');
-    const [gameNumber, SetGameNumber] = useState(0);
-    const [messageToDisplay, SetMessageToDisplay] = useState('');
+    const { gameState: { readyGame,isMyTurn}, dispatch } = useContext(gameContext);
 
-    const handleInputChange = (event) => {
-        event.persist();
-        setPlayerName(event.target.value);
+    const [opponentPlayerName, setOpponentPlayerName] = useState('');
+    const [playerName,setPlayerName] = useState('');
+    const [isLoading,setIsLoading] = useState(false); 
+    const [messageToDisplay,setMessageToDisplay] = useState('')
+
+    useEffect(()=>{
+        setPlayerName(sessionStorage.getItem('playerName') || '')
+    },[]);
+
+    const handleSetPlayerName = (playerNameParams) =>{
+        setPlayerName(playerNameParams);
     }
 
     const handleInitializeGame = () => {
         socket_io.emit('request_match', { playerName }, () => {
-            SetMessageToDisplay('initialize game (emit)')
         });
+        setIsLoading(true);
+        setMessageToDisplay('')
     };
 
     useEffect(() => {
         socket_io.on("connect", () => {
-            SetMessageToDisplay(`I'm connecting ..........(${socket_io.id})`);
         });
 
         socket_io.on('request_match', (data) => {
-            SetMessageToDisplay('initialize game (reciving)');
-            SetGameNumber(data.gameNumber)
-
             if (data.myPlayer === 2) {
-                console.log('initialise game')
                 socket_io.emit('initialize_game', {});
             }
 
-            dispatch({ type: INITIALIZE_GAME, payload: { myPlayer: data.myPlayer } });
+            dispatch({ type: INITIALIZE_GAME, payload: { gameNumber: data.gameNumber, myPlayer: data.myPlayer } });
         });
 
         socket_io.on('ready_game', (data) => {
-            const { opponentPlayerName } = data;
-            SetMessageToDisplay(`opponentPlayerName : ${opponentPlayerName}`);
+            const { opponentPlayerName: opponentName } = data;
+            setOpponentPlayerName(opponentName);
+            setIsLoading(false);
+            dispatch({ type: READY_GAME, payload: {} });
         });
 
-        socket_io.on('resign',(data) => {
-            SetMessageToDisplay('your opponent has resign the game');
+        socket_io.on('resign', (data) => {
+            dispatch({ type: RESIGN_GAME, payload: {  } })
+            setMessageToDisplay('you won! your opponenet has resign the game')
         })
         socket_io.on('move', (data) => {
             const { IncomingSelectedSquare, IncommingNextSquare } = data;
-            SetMessageToDisplay('the opponent has moved a piece');
             dispatch({ type: SYNC_OPPONENT_MOVE, payload: { IncomingSelectedSquare, IncommingNextSquare } })
         })
     }, [dispatch]);
     return (
         <div className={styles.home_container} >
             <div className={styles.board_container}>
+            {readyGame && <TurnIndicator isMyTurn={!isMyTurn} name={opponentPlayerName} />}
                 <Board />
+            <TurnIndicator isMyTurn={isMyTurn} name={playerName} />
             </div>
-            <div>
-                <p>{messageToDisplay}</p>
-                <h4>Player: {myPlayer}</h4>
-                <h4 style={{ fontWeight: '300' }}>Allowed movement</h4>
-                {allowedSquares && allowedSquares.map(((square, index) => <p key={index}>{`${square.row} : ${square.column}`}</p>))}
-                <h5>game N° {gameNumber}</h5>
-                <input name="playerName" value={playerName} placeholder="player Name" onChange={handleInputChange} />
-                <button onClick={handleInitializeGame}>initialize_game</button>
+            <div className={styles.board_status_container} >
+                <Modal handleSetPlayerName={handleSetPlayerName} />
+                {!readyGame && !isLoading && <button onClick={handleInitializeGame}>start new game</button>}
+                {isLoading && 'request matching loading ........'}
+                <p>{messageToDisplay && messageToDisplay}</p>
             </div>
         </div>
     )
