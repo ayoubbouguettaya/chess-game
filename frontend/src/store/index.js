@@ -8,8 +8,11 @@ const { Provider } = gameContext;
 const initialState = {
     board: [],
     myPlayer: 0,
+    gameNumber: 0,
     selectedSquares: undefined,
     allowedSquare: [],
+    isMyTurn: undefined,
+    readyGame: false,
 }
 
 const GameProvider = ({ children }) => {
