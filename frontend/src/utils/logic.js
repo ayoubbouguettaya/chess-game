@@ -104,9 +104,13 @@ export const calculateAllowedSquares = (board, myPlayer, selectedSquare) => {
 const calculatePawnMoves = (board, myPlayer, selectedSquare) => {
     const allowedMoves = [];
     const stepAhead = (myPlayer === 1) ? -1 : 1;
+    const rowStart = (myPlayer === 1) ? 6 : 1;
 
     if (getPiece(board, selectedSquare, stepAhead, 0).piece === EMPTY) {
         allowedMoves.push({ row: selectedSquare.row + stepAhead, column: selectedSquare.column });
+    }
+    if (selectedSquare.row === rowStart && getPiece(board, selectedSquare, (stepAhead * 2), 0).piece === EMPTY) {
+        allowedMoves.push({ row: selectedSquare.row + (stepAhead * 2), column: selectedSquare.column });
     }
     if (!getPiece(board, selectedSquare, stepAhead, 1).isMyPiece && getPiece(board, selectedSquare, stepAhead, 1).piece !== EMPTY) {
         allowedMoves.push({ row: selectedSquare.row + stepAhead, column: selectedSquare.column + 1 });
